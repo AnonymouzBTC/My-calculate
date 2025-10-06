@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Telegram Calculator</title>
+<title>Telegram Calculator Mini App</title>
 <style>
   body {
     display: flex;
@@ -22,7 +22,7 @@
     box-shadow: 0 8px 25px rgba(0,0,0,0.3);
     display: flex;
     flex-direction: column;
-    width: 300px;
+    width: 320px;
   }
 
   .display {
@@ -107,41 +107,54 @@
 </div>
 
 <script>
-const display = document.getElementById('display');
 let currentInput = '';
+const display = document.getElementById('display');
 
+// Telegram Web App integration
+let tg = null;
+if (window.Telegram.WebApp) {
+    tg = window.Telegram.WebApp;
+    tg.expand(); // auto-expand mini-app to full screen
+}
+
+// Append numbers
 function appendNumber(num) {
-  if (currentInput === '0' && num !== '.') currentInput = num;
-  else currentInput += num;
-  display.innerText = currentInput;
-}
-
-function appendOperator(op) {
-  if (currentInput === '') return;
-  const lastChar = currentInput[currentInput.length - 1];
-  if ('+-*/'.includes(lastChar)) currentInput = currentInput.slice(0,-1) + op;
-  else currentInput += op;
-  display.innerText = currentInput;
-}
-
-function clearDisplay() {
-  currentInput = '';
-  display.innerText = '0';
-}
-
-function calculateResult() {
-  try {
-    currentInput = eval(currentInput).toString();
+    if (currentInput === '0' && num !== '.') currentInput = num;
+    else currentInput += num;
     display.innerText = currentInput;
+}
 
-    // Telegram WebApp integration
-    if (window.Telegram.WebApp) {
-      window.Telegram.WebApp.sendData(currentInput); 
+// Append operators
+function appendOperator(op) {
+    if (currentInput === '') return;
+    const lastChar = currentInput[currentInput.length - 1];
+    if ('+-*/'.includes(lastChar)) {
+        currentInput = currentInput.slice(0, -1) + op;
+    } else {
+        currentInput += op;
     }
-  } catch {
-    display.innerText = 'Error';
+    display.innerText = currentInput;
+}
+
+// Clear display
+function clearDisplay() {
     currentInput = '';
-  }
+    display.innerText = '0';
+}
+
+// Calculate result
+function calculateResult() {
+    try {
+        const result = eval(currentInput).toString();
+        currentInput = result;
+        display.innerText = result;
+
+        // Send result to Telegram bot if in Web App
+        if (tg) tg.sendData(result);
+    } catch {
+        display.innerText = 'Error';
+        currentInput = '';
+    }
 }
 </script>
 
