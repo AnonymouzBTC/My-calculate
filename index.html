@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Telegram Calculator Mini App</title>
 <style>
-  body {
+body {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -13,9 +13,8 @@
     background: #f0f0f0;
     font-family: Arial, sans-serif;
     margin: 0;
-  }
-
-  .calculator {
+}
+.calculator {
     background: #fff;
     padding: 15px;
     border-radius: 20px;
@@ -23,9 +22,8 @@
     display: flex;
     flex-direction: column;
     width: 320px;
-  }
-
-  .display {
+}
+.display {
     height: 70px;
     background: #222;
     color: #fff;
@@ -35,128 +33,111 @@
     border-radius: 15px;
     margin-bottom: 15px;
     overflow-x: auto;
-  }
-
-  .main-buttons {
-    display: flex;
-  }
-
-  .numbers {
+}
+.main-buttons { display: flex; }
+.numbers {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 10px;
     flex: 3;
-  }
-
-  .operators {
+}
+.operators {
     display: flex;
     flex-direction: column;
     grid-gap: 10px;
     margin-left: 10px;
     flex: 1;
-  }
-
-  button {
+}
+button {
     padding: 20px;
     font-size: 1.5em;
     border: none;
     border-radius: 12px;
     cursor: pointer;
     transition: 0.2s;
-  }
-
-  button:hover { background: #ddd; }
-
-  .operator { background: #f39c12; color: #fff; }
-  .operator:hover { background: #e67e22; }
-
-  .equals { background: #27ae60; color: #fff; }
-  .equals:hover { background: #2ecc71; }
-
-  .clear { background: #e74c3c; color: #fff; }
-  .clear:hover { background: #c0392b; }
+}
+button:hover { background: #ddd; }
+.operator { background: #f39c12; color: #fff; }
+.operator:hover { background: #e67e22; }
+.equals { background: #27ae60; color: #fff; }
+.equals:hover { background: #2ecc71; }
+.clear { background: #e74c3c; color: #fff; }
+.clear:hover { background: #c0392b; }
 </style>
 </head>
 <body>
-
 <div class="calculator">
-  <div id="display" class="display">0</div>
-  <div class="main-buttons">
-    <div class="numbers">
-      <button class="clear" onclick="clearDisplay()">C</button>
-      <button onclick="appendNumber('7')">7</button>
-      <button onclick="appendNumber('8')">8</button>
-      <button onclick="appendNumber('9')">9</button>
-      <button onclick="appendNumber('4')">4</button>
-      <button onclick="appendNumber('5')">5</button>
-      <button onclick="appendNumber('6')">6</button>
-      <button onclick="appendNumber('1')">1</button>
-      <button onclick="appendNumber('2')">2</button>
-      <button onclick="appendNumber('3')">3</button>
-      <button onclick="appendNumber('0')">0</button>
-      <button onclick="appendNumber('.')">.</button>
-      <button class="equals" onclick="calculateResult()">=</button>
+    <div id="display" class="display">0</div>
+    <div class="main-buttons">
+        <div class="numbers">
+            <button class="clear" onclick="clearDisplay()">C</button>
+            <button onclick="appendNumber('7')">7</button>
+            <button onclick="appendNumber('8')">8</button>
+            <button onclick="appendNumber('9')">9</button>
+            <button onclick="appendNumber('4')">4</button>
+            <button onclick="appendNumber('5')">5</button>
+            <button onclick="appendNumber('6')">6</button>
+            <button onclick="appendNumber('1')">1</button>
+            <button onclick="appendNumber('2')">2</button>
+            <button onclick="appendNumber('3')">3</button>
+            <button onclick="appendNumber('0')">0</button>
+            <button onclick="appendNumber('.')">.</button>
+            <button class="equals" onclick="calculateResult()">=</button>
+        </div>
+        <div class="operators">
+            <button class="operator" onclick="appendOperator('+')">+</button>
+            <button class="operator" onclick="appendOperator('-')">−</button>
+            <button class="operator" onclick="appendOperator('×')">×</button>
+            <button class="operator" onclick="appendOperator('÷')">÷</button>
+        </div>
     </div>
-    <div class="operators">
-      <button class="operator" onclick="appendOperator('+')">+</button>
-      <button class="operator" onclick="appendOperator('-')">−</button>
-      <button class="operator" onclick="appendOperator('*')">×</button>
-      <button class="operator" onclick="appendOperator('/')">÷</button>
-    </div>
-  </div>
 </div>
 
 <script>
 let currentInput = '';
 const display = document.getElementById('display');
-
-// Telegram Web App integration
 let tg = null;
 if (window.Telegram.WebApp) {
     tg = window.Telegram.WebApp;
-    tg.expand(); // auto-expand mini-app to full screen
+    tg.expand();
 }
 
-// Append numbers
-function appendNumber(num) {
-    if (currentInput === '0' && num !== '.') currentInput = num;
-    else currentInput += num;
-    display.innerText = currentInput;
+// Map symbols to JS operators
+function mapOperator(op) {
+    if(op==='×') return '*';
+    if(op==='÷') return '/';
+    return op;
 }
 
-// Append operators
-function appendOperator(op) {
-    if (currentInput === '') return;
-    const lastChar = currentInput[currentInput.length - 1];
-    if ('+-*/'.includes(lastChar)) {
-        currentInput = currentInput.slice(0, -1) + op;
-    } else {
-        currentInput += op;
-    }
-    display.innerText = currentInput;
+function appendNumber(num){
+    if(currentInput==='0' && num!=='.') currentInput=num;
+    else currentInput+=num;
+    display.innerText=currentInput;
 }
 
-// Clear display
-function clearDisplay() {
-    currentInput = '';
-    display.innerText = '0';
+function appendOperator(op){
+    if(currentInput==='') return;
+    const last=currentInput[currentInput.length-1];
+    if('+-*/'.includes(last)) currentInput=currentInput.slice(0,-1)+mapOperator(op);
+    else currentInput+=mapOperator(op);
+    display.innerText=currentInput;
 }
 
-// Calculate result
-function calculateResult() {
-    try {
-        const result = eval(currentInput).toString();
-        currentInput = result;
-        display.innerText = result;
+function clearDisplay(){currentInput=''; display.innerText='0';}
 
-        // Send result to Telegram bot if in Web App
-        if (tg) tg.sendData(result);
-    } catch {
-        display.innerText = 'Error';
-        currentInput = '';
+function calculateResult(){
+    try{
+        if(currentInput==='') return;
+        let result=Function('"use strict";return('+currentInput+')')();
+        result=parseFloat(result.toFixed(10)).toString();
+        currentInput=result;
+        display.innerText=result;
+        if(tg) tg.sendData(result);
+    }catch{
+        display.innerText='Error';
+        currentInput='';
     }
 }
 </script>
-
 </body>
 </html>
