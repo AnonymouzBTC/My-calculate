@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Responsive Calculator Mini App</title>
+<title>Advanced Calculator Mini App</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -20,7 +20,7 @@
         border-radius: 12px;
         box-shadow: 0 0 15px rgba(0,0,0,0.2);
         max-width: 400px;
-        width: 90%;
+        width: 95%;
     }
     #display {
         width: 100%;
@@ -42,35 +42,21 @@
         flex: 1 1 20%;
         margin: 3px;
         font-size: 1.5rem;
-        height: 60px;
+        height: 55px;
         border-radius: 8px;
         cursor: pointer;
         background: #e0e0e0;
         border: none;
         transition: 0.1s;
     }
-    .btn:hover {
-        background: #d0d0d0;
-    }
-    .btn-equal {
-        flex: 2 1 40%;
-        background: #4CAF50;
-        color: white;
-        font-size: 1.8rem;
-        height: 70px;
-    }
-    .btn-clear {
-        flex: 1 1 20%;
-        background: #f44336;
-        color: white;
-        font-size: 1.2rem;
-        height: 50px;
-    }
+    .btn:hover { background: #d0d0d0; }
+    .btn-equal { flex: 1 1 20%; background: #4CAF50; color: white; font-size: 1.8rem; height: 55px; }
+    .btn-clear { flex: 2 1 40%; background: #f44336; color: white; font-size: 1.5rem; height: 60px; }
     @media (max-width: 360px) {
         #display { font-size: 1.5rem; height: 40px; }
-        .btn { font-size: 1.2rem; height: 50px; }
-        .btn-equal { font-size: 1.5rem; height: 60px; }
-        .btn-clear { font-size: 1rem; height: 40px; }
+        .btn { font-size: 1.2rem; height: 45px; }
+        .btn-equal { font-size: 1.3rem; height: 50px; }
+        .btn-clear { font-size: 1.2rem; height: 50px; }
     }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.12.0/math.min.js"></script>
@@ -79,6 +65,7 @@
 <div id="calculator">
     <input type="text" id="display" value="0" readonly>
     
+    <!-- Numbers and operators -->
     <div class="row">
         <button class="btn" onclick="appendNumber('7')">7</button>
         <button class="btn" onclick="appendNumber('8')">8</button>
@@ -100,11 +87,25 @@
     <div class="row">
         <button class="btn" onclick="appendNumber('0')">0</button>
         <button class="btn" onclick="appendNumber('.')">.</button>
-        <button class="btn btn-equal" onclick="calculateResult()">=</button>
+        <button class="btn-clear" onclick="clearDisplay()">C</button>
+        <button class="btn-equal" onclick="calculateResult()">=</button>
         <button class="btn" onclick="appendOperator('+')">+</button>
     </div>
+
+    <!-- Advanced functions -->
     <div class="row">
-        <button class="btn-clear" onclick="clearDisplay()">C</button>
+        <button class="btn" onclick="appendFunction('sqrt(')">√</button>
+        <button class="btn" onclick="appendFunction('^')">^</button>
+        <button class="btn" onclick="appendFunction('(')">(</button>
+        <button class="btn" onclick="appendFunction(')')">)</button>
+        <button class="btn" onclick="appendFunction('log(')">log</button>
+    </div>
+    <div class="row">
+        <button class="btn" onclick="appendFunction('sin(')">sin</button>
+        <button class="btn" onclick="appendFunction('cos(')">cos</button>
+        <button class="btn" onclick="appendFunction('tan(')">tan</button>
+        <button class="btn" onclick="appendFunction('pi')">π</button>
+        <button class="btn" onclick="appendFunction('e')">e</button>
     </div>
 </div>
 
@@ -131,6 +132,11 @@ function appendOperator(op){
     } else {
         currentInput += op;
     }
+    display.value = currentInput;
+}
+
+function appendFunction(func){
+    currentInput += func;
     display.value = currentInput;
 }
 
