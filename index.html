@@ -3,19 +3,82 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculator Mini App</title>
+<title>Responsive Calculator Mini App</title>
 <style>
-    body { font-family: Arial, sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; background:#f0f0f0; }
-    #calculator { background:#fff; padding:20px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.2); }
-    #display { width:100%; height:40px; text-align:right; font-size:24px; margin-bottom:10px; padding:5px; border:1px solid #ccc; border-radius:5px; }
-    .btn { width:60px; height:60px; margin:5px; font-size:20px; cursor:pointer; }
-    .row { display:flex; justify-content:center; }
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: #f0f0f0;
+        margin: 0;
+    }
+    #calculator {
+        background: #fff;
+        padding: 15px;
+        border-radius: 12px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        max-width: 400px;
+        width: 90%;
+    }
+    #display {
+        width: 100%;
+        height: 50px;
+        text-align: right;
+        font-size: 2rem;
+        margin-bottom: 10px;
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+    }
+    .row {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 5px;
+    }
+    .btn {
+        flex: 1 1 20%;
+        margin: 3px;
+        font-size: 1.5rem;
+        height: 60px;
+        border-radius: 8px;
+        cursor: pointer;
+        background: #e0e0e0;
+        border: none;
+        transition: 0.1s;
+    }
+    .btn:hover {
+        background: #d0d0d0;
+    }
+    .btn-equal {
+        flex: 2 1 40%;
+        background: #4CAF50;
+        color: white;
+        font-size: 1.8rem;
+        height: 70px;
+    }
+    .btn-clear {
+        flex: 1 1 20%;
+        background: #f44336;
+        color: white;
+        font-size: 1.2rem;
+        height: 50px;
+    }
+    @media (max-width: 360px) {
+        #display { font-size: 1.5rem; height: 40px; }
+        .btn { font-size: 1.2rem; height: 50px; }
+        .btn-equal { font-size: 1.5rem; height: 60px; }
+        .btn-clear { font-size: 1rem; height: 40px; }
+    }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.12.0/math.min.js"></script>
 </head>
 <body>
 <div id="calculator">
     <input type="text" id="display" value="0" readonly>
+    
     <div class="row">
         <button class="btn" onclick="appendNumber('7')">7</button>
         <button class="btn" onclick="appendNumber('8')">8</button>
@@ -37,11 +100,11 @@
     <div class="row">
         <button class="btn" onclick="appendNumber('0')">0</button>
         <button class="btn" onclick="appendNumber('.')">.</button>
-        <button class="btn" onclick="calculateResult()">=</button>
+        <button class="btn btn-equal" onclick="calculateResult()">=</button>
         <button class="btn" onclick="appendOperator('+')">+</button>
     </div>
     <div class="row">
-        <button class="btn" onclick="clearDisplay()" style="width:260px;">C</button>
+        <button class="btn-clear" onclick="clearDisplay()">C</button>
     </div>
 </div>
 
@@ -61,10 +124,9 @@ function appendNumber(num){
 }
 
 function appendOperator(op){
-    if(currentInput === '') return; // don't start with operator
+    if(currentInput === '') return;
     let lastChar = currentInput.slice(-1);
     if("+-*/".includes(lastChar)) {
-        // replace last operator with new one
         currentInput = currentInput.slice(0, -1) + op;
     } else {
         currentInput += op;
@@ -82,8 +144,8 @@ function calculateResult(){
         if(currentInput === '') return;
         let result = math.evaluate(currentInput).toString();
         display.value = result;
-        currentInput = result; // allow further calculations
-        if(tg) tg.sendData(result); // send result to Telegram bot
+        currentInput = result;
+        if(tg) tg.sendData(result);
     } catch(err){
         display.value = 'Error';
         currentInput = '';
